@@ -13,3 +13,6 @@ $RECYCLE.BIN/
 # Temp
 *.tmp
 *.log
+
+# Local style copy created by eval/README.md reproduce steps
+eval/.claude/

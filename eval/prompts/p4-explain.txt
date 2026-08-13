@@ -1,0 +1,3 @@
+Answer in English. Do not use any tools.
+
+I never understood how the Node.js event loop works. Can you explain it to me properly? I keep hearing about microtasks and macrotasks and I get lost every time.

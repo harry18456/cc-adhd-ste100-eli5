@@ -1,0 +1,13 @@
+用繁體中文回答。不要使用任何工具，直接回答。
+
+我的 Node.js API 在正式環境掛掉，錯誤如下：
+
+TypeError: Cannot read properties of undefined (reading 'id')
+    at getOrderSummary (/app/src/orders/summary.js:31:27)
+    at async /app/src/routes/orders.js:12:19
+
+summary.js 第 31 行是：
+
+  const userId = order.customer.id;
+
+order 物件來自 `await db.orders.findOne({ orderId })`。大部分訂單都正常，只有少數幾筆會掛。為什麼？怎麼修？

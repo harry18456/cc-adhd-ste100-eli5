@@ -40,8 +40,18 @@ are adapted from:
     Copyright (c) 2026 Dustin Yuchen Teng
     Licensed under the MIT License.
 
-Both upstream projects are distributed under the MIT License, whose terms are
-reproduced identically above.
+The two GitHub projects above are distributed under the MIT License, whose terms
+are reproduced identically above.
+
+The Layer 3 (word choice) rules in `output-styles/adhd-ste100-eli5.md` are
+adapted from:
+
+    ELI5 output style
+    https://x.com/lydiahallie/status/2080378470111256907
+    Shared publicly by Lydia Hallie (@lydiahallie)
+
+No license was stated for that post. The rules here are a paraphrase, not a
+copy of its text, and are credited to the author.
 
 ---
 

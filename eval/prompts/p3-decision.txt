@@ -1,0 +1,3 @@
+Answer in English. Do not use any tools. Answer directly.
+
+I am designing a Postgres schema for user notification preferences. There are about 12 boolean flags per user and the set may grow. Should I store them as a JSONB column on the users table, or as a separate preferences table? I need to filter users by preference in queries.

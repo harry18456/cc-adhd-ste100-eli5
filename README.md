@@ -12,31 +12,74 @@ No diagnosis required. Bad days count.
 
 ## What changes
 
-**Before**
+Both blocks below are real `claude -p` output (Sonnet, Claude Code v2.1.229,
+August 2026) for the same prompt: a production API that crashes on
+`order.customer.id` because some orders have no `customer` field. One run per
+condition, no re-rolls. Prompts, raw outputs, and the scoring script live in
+[`eval/`](eval/).
 
-> Great question! Let me take a look at your authentication setup. Looking at the
-> code in `src/auth.ts`, it appears that the token verification logic has been
-> implemented using an older version of the jsonwebtoken API, which was deprecated
-> in version 9. One approach that could potentially work would be to update the
-> package and then refactor that function accordingly. After the changes have been
-> made, the auth tests should be run to make sure nothing has been broken. By the
-> way, you might also want to think about your dependency versions more broadly at
-> some point. Hope this helps! Let me know if you want to dig deeper.
+**Before — default style.** 316 words of prose. The fix arrives in the second half.
 
-**After**
+> ## Why it's happening
+>
+> `order.customer` is `undefined` for some of the documents returned by
+> `db.orders.findOne({ orderId })`. This is a data issue, not a code bug per se —
+> some orders in the collection just don't have a `customer` field (or it's
+> `null`). Common causes:
+>
+> - **Guest checkouts** — orders placed without a logged-in user never got a
+>   `customer` object attached.
+> - **Orphaned/soft-deleted users** — the customer record was deleted (e.g. GDPR
+>   erasure, account deletion) but the order document wasn't updated or the
+>   reference wasn't populated.
+>
+> *[cut here for the README — two more causes, then four fix options with code.
+> Full text: [`eval/outputs/p2-baseline.md`](eval/outputs/p2-baseline.md)]*
 
-> Run `npm install jsonwebtoken@latest`.
+**After — this style.** 141 words, quoted in full.
+
+> Add optional chaining and a guard clause in `summary.js:31`.
 >
-> 1. Open `src/auth.ts`
-> 2. Replace `verifyToken` (lines 42 to 58) with the snippet below
-> 3. Run `npm test -- auth.spec.ts`
+> ```js
+> const userId = order.customer?.id;
+> if (!userId) {
+>   throw new Error(`Order ${order.orderId} has no customer attached`);
+> }
+> ```
 >
-> About 10 minutes. The old API stopped working in jsonwebtoken 9. The new API
-> returns a promise, so `verifyToken` becomes async.
+> **Cause**: `order.customer` is `undefined` for some documents. `db.orders.findOne`
+> returns whatever is stored. Some order records were saved without a `customer`
+> field — likely guest checkouts, deleted-user orders, or old records from before
+> `customer` was required.
 >
-> Skipped: the wider dependency audit. Ask if you want it next.
+> **Steps**:
+> 1. Open `/app/src/orders/summary.js`.
+> 2. Replace line 31 with the code above.
+> 3. Decide what should happen for orders with no customer — throw, skip, or
+>    return a fallback summary. The example throws a clear error instead of
+>    crashing with `TypeError`.
+> 4. Redeploy and check logs for the new "has no customer attached" message. It
+>    tells you which orders are missing data.
 >
-> Next: run step 1. Paste the first failing line if a test fails.
+> **Root fix**: query your database for orders where `customer` is missing or
+> null. Decide if those records need a data backfill.
+>
+> Next: run that query against production data to see how many orders are affected.
+
+### Measured
+
+Five prompt types, one run per condition — bug fix, error diagnosis, schema
+decision, concept explanation, multi-step how-to:
+
+| Per answer, averaged | Default | Styled |
+|---|---|---|
+| Prose words | 367 | 176 |
+| Sentences over the 20-word cap | 39% | 8% |
+| Forbidden opener / closer | 1 of 5 runs | 0 of 5 |
+| Ends with one next action | 0 of 5 | 5 of 5 |
+
+One honest miss: rule 5 of Layer 1 (time estimates) fired in 0 of 5 styled runs.
+Method and caveats: [`eval/README.md`](eval/README.md).
 
 ## Why three ingredients
 
@@ -126,9 +169,14 @@ To set it without the menu, put this in `.claude/settings.local.json`:
 
 ```json
 {
-  "outputStyle": "ADHD STE100 ELI5"
+  "outputStyle": "adhd-ste100-eli5:ADHD STE100 ELI5"
 }
 ```
+
+The `adhd-ste100-eli5:` prefix is the plugin namespace, and it is required —
+tested on v2.1.229, the bare name `ADHD STE100 ELI5` does not resolve when the
+style comes from the plugin. The bare name works only for a copy placed directly
+in `.claude/output-styles/`.
 
 ## Scope
 
@@ -149,6 +197,13 @@ push to GitHub needed:
 claude --plugin-dir <path to your fork>
 ```
 
+For headless runs, pass the style explicitly:
+
+```
+claude -p "..." --plugin-dir <path> \
+  --settings '{"outputStyle":"adhd-ste100-eli5:ADHD STE100 ELI5"}'
+```
+
 Common edits:
 
 - Loosen the sentence caps if 20 words feels clipped for your work.
@@ -165,7 +220,9 @@ L. Rostain.
 Layer 2 (sentence mechanics) is adapted from
 **[danyuchn/asd-ste100-skill](https://github.com/danyuchn/asd-ste100-skill)** (MIT).
 
-Layer 3 (word choice) started as a personal ELI5 output style.
+Layer 3 (word choice) is adapted from the `ELI5` output style that
+**[Lydia Hallie](https://x.com/lydiahallie)** shared
+[on X](https://x.com/lydiahallie/status/2080378470111256907).
 
 The layer model and the three tie-breaker rules are this project's own.
 

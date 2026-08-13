@@ -1,0 +1,3 @@
+Answer in English. Do not use any tools. Answer directly.
+
+My React app (Vite, plain CSS) needs a dark mode. Requirements: a toggle button, colors driven by CSS variables, the choice saved in localStorage, and the OS preference respected on first visit. How do I do this?

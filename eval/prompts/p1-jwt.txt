@@ -1,0 +1,15 @@
+Answer in English. This is a writing-style benchmark, so English is required.
+
+Do not use any tools. Answer directly from the code below.
+
+My file src/auth.ts contains this:
+
+```ts
+import jwt from 'jsonwebtoken';
+
+export function verifyToken(token: string) {
+  return jwt.verify(token, process.env.JWT_SECRET, { algorithms: ['HS256'] });
+}
+```
+
+My package.json pins "jsonwebtoken": "^8.5.1". My auth tests in auth.spec.ts started failing after a teammate bumped the package. What is wrong and what should I do?

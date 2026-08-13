@@ -1,0 +1,13 @@
+Answer in English. Do not use any tools. Answer directly.
+
+My Node.js API crashed in production with this error:
+
+TypeError: Cannot read properties of undefined (reading 'id')
+    at getOrderSummary (/app/src/orders/summary.js:31:27)
+    at async /app/src/routes/orders.js:12:19
+
+summary.js line 31 is:
+
+  const userId = order.customer.id;
+
+The order object comes from `await db.orders.findOne({ orderId })`. It works for most orders but crashes for a few. Why, and how do I fix it?

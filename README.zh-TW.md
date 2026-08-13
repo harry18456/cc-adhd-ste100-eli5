@@ -10,23 +10,68 @@
 
 ## 差別長這樣
 
-**改造前**
+下面兩段都是真實的 `claude -p` 輸出（Sonnet、Claude Code v2.1.229、2026 年 8 月），同一個中文 prompt：正式環境 API 在 `order.customer.id` 噴 `TypeError`，因為少數訂單沒有 `customer` 欄位。每個條件各跑一次，沒有重抽。Prompt、原始輸出、評分腳本都在 [`eval/`](eval/)。
 
-> 這是個好問題！讓我先看一下你的驗證流程。從 `src/auth.ts` 的程式碼看起來，token 驗證的邏輯似乎是用比較舊版的 jsonwebtoken API 實作的，而那個 API 在第 9 版就已經被棄用了。一個可能可行的做法是更新套件，然後把那個函式重構一下。改完之後，應該要跑一下 auth 的測試，確認沒有東西被弄壞。另外順帶一提，你或許也可以找個時間整體檢視一下你的相依套件版本。希望這有幫助！如果想再深入討論再跟我說。
+**改造前 —— 預設風格。** 修法埋在後半段。
 
-**改造後**
+> 這個錯誤的模式(「少數訂單」而非全部)代表**資料本身有缺失，不是程式邏輯對所有情況都錯**。`order.customer` 在某些訂單上是 `undefined`,代表 `db.orders.findOne({ orderId })` 回傳的物件裡沒有 `customer` 這個欄位或它是 null。
+>
+> ## 可能原因
+>
+> 1. **Guest 訂單 / 未登入結帳**:少數訂單本來就沒有綁定 customer(訪客下單),`customer` 欄位設計上就允許空值。
+> 2. **Populate/Join 失敗**:如果 `customer` 是透過 reference 關聯查詢出來的(例如 Mongoose 的 `.populate('customer')`),當該顧客帳號被刪除或資料被清除時,populate 會回傳 `null` 而不是拋錯。
+>
+> *〔README 在此截斷 —— 後面還有兩個成因、排查步驟、三段修法。全文：[`eval/outputs/p6-zh-baseline.md`](eval/outputs/p6-zh-baseline.md)〕*
 
-> 執行 `npm install jsonwebtoken@latest`。
+**改造後 —— 本 style。** 全文引用。
+
+> **原因**
 >
-> 1. 打開 `src/auth.ts`
-> 2. 把 `verifyToken`（第 42 到 58 行）換成下面這段
-> 3. 執行 `npm test -- auth.spec.ts`
+> `db.orders.findOne` 查到的 `order`,有些舊資料的 `customer` 欄位是 `undefined`。第 31 行直接讀 `order.customer.id`,遇到 `undefined.id` 就會噴錯。
 >
-> 大約 10 分鐘。舊 API 在 jsonwebtoken 9 就停止運作了。新 API 會回傳 promise，所以 `verifyToken` 要改成 async。
+> 常見成因,2 選 1:
+> 1. 這些訂單建立時,`customer` 欄位沒被寫入(舊資料、或建單流程曾經漏寫)。
+> 2. 訂單是「訪客結帳」建立的,本來就沒有綁 `customer`。
 >
-> 略過：整體相依套件盤點。想做的話跟我說。
+> **先確認是哪一種**
 >
-> 下一步：跑第 1 步。有測試失敗就把第一行錯誤貼給我。
+> 跑這行查詢,看有多少筆訂單的 `customer` 是空的:
+>
+> ```js
+> db.orders.find({ customer: { $exists: false } }).count()
+> ```
+>
+> - 數量很少且都是舊訂單 → 情況 1,資料問題。
+> - 數量持續增加、且都是同一種訂單類型 → 情況 2,業務邏輯本來就允許沒有 customer。
+>
+> **怎麼修**
+>
+> 第 31 行改成:
+>
+> ```js
+> const userId = order.customer?.id ?? null;
+> ```
+>
+> `?.` 是 optional chaining,意思是「前面是 undefined 就整段回傳 undefined,不會噴錯」。`?? null` 是說「如果拿到 undefined,就換成 null」。
+>
+> 改完後,呼叫這個 `userId` 的地方要檢查是否能接受 `null`,不然錯誤只是往後延,不是真的解決。
+>
+> **下一步**
+>
+> 先跑上面那行查詢,確認是資料問題還是訪客訂單,再決定要不要修資料或加 null 判斷。
+
+### 量測結果
+
+五種英文題型各跑一次 —— bug 修復、錯誤診斷、schema 決策、觀念解釋、多步驟教學：
+
+| 每則回答平均 | 預設 | 套用後 |
+|---|---|---|
+| 內文字數 | 367 | 176 |
+| 超過 20 詞上限的句子 | 39% | 8% |
+| 禁用開場白 / 收尾 | 5 次中 1 次 | 5 次中 0 次 |
+| 結尾給一個 next action | 5 次中 0 次 | 5 次中 5 次 |
+
+上方引用的中文題未納入表格 —— 評分腳本以英文詞數為單位。兩個誠實的觀察：第 1 層第 5 條（時間估計）在 5 次中 0 次觸發；中文那次的第一行是原因不是動作，第 1 層第 1 條沒完全跟上。方法與注意事項見 [`eval/README.md`](eval/README.md)。
 
 ## 為什麼要三個成分
 
@@ -95,9 +140,11 @@
 
 ```json
 {
-  "outputStyle": "ADHD STE100 ELI5"
+  "outputStyle": "adhd-ste100-eli5:ADHD STE100 ELI5"
 }
 ```
+
+`adhd-ste100-eli5:` 這個前綴是 plugin 命名空間，**必須加** —— 在 v2.1.229 實測過，style 來自 plugin 時裸名 `ADHD STE100 ELI5` 解析不到。裸名只在檔案直接放進 `.claude/output-styles/` 時有效。
 
 ## 作用範圍
 
@@ -111,6 +158,13 @@ Fork 之後改 `output-styles/adhd-ste100-eli5.md`，然後直接載入你的版
 
 ```
 claude --plugin-dir <你 fork 的路徑>
+```
+
+headless（`-p`）執行時要明確指定 style：
+
+```
+claude -p "..." --plugin-dir <路徑> \
+  --settings '{"outputStyle":"adhd-ste100-eli5:ADHD STE100 ELI5"}'
 ```
 
 常見的調整：
@@ -127,7 +181,8 @@ claude --plugin-dir <你 fork 的路徑>
 第 2 層（句子力學）改編自
 **[danyuchn/asd-ste100-skill](https://github.com/danyuchn/asd-ste100-skill)**（MIT）。
 
-第 3 層（用詞語域）源自個人自用的 ELI5 output style。
+第 3 層（用詞語域）改編自 **[Lydia Hallie](https://x.com/lydiahallie)** 在
+[X 上分享](https://x.com/lydiahallie/status/2080378470111256907)的 `ELI5` output style。
 
 三層模型與三條裁決規則是本專案自己的。
 
