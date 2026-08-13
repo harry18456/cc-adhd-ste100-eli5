@@ -1,0 +1,15 @@
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# Editor / IDE
+.vs/
+.vscode/
+*.suo
+*.user
+
+# Temp
+*.tmp
+*.log
