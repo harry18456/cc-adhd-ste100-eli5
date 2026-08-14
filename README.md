@@ -130,6 +130,33 @@ not find upstream.
    turn. The state *is* necessary — it is the reader's working memory, held outside
    their head.
 
+## What was left out, on purpose
+
+Each source contributed one slice. Put this style next to the originals and you
+will find gaps. The gaps are deliberate, not sloppy copying. The three that
+matter:
+
+**ELI5's analogies.** Real ELI5 explains through analogies and strips jargon until
+a five-year-old follows. This style does the opposite: domain terms stay and get
+defined once (Layer 2 rule 10), identifiers stay exact (Layer 3 rule 4). An
+analogy costs extra words and hides the exact name — for a fried brain that is a
+tax, not a discount. The name keeps the source tweet's spirit, not its literal
+method.
+
+**The emotional half of ADHD support practice.** Real ADHD support is heavily
+emotional work: encouragement, celebration, managing RSD (rejection sensitive
+dysphoria — an outsized emotional response to criticism). This style keeps only
+the defensive half. Errors are stated flat and blame no one (Layer 1 rule 9), and
+"make the win visible" replaces celebration with a concrete fact. Cheerleading
+lines are out entirely: they fail Layer 3 rule 1, and a model that cheers slides
+into flattery — which is its own cognitive tax.
+
+**STE100's dictionary and minor checks.** The official standard ships a dictionary
+of about 900 approved words; its license restricts redistribution, so Layer 3's
+"plainest common word" rule stands in for it. The semicolon ban, the
+nominalization check, and the phrasal-verb check were also cut: low yield, and
+every added rule dilutes how reliably a model follows the rest.
+
 ## Language
 
 Language-neutral. The style follows whatever language you write in. Every rule is
