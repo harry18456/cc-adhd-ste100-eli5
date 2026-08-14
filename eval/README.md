@@ -51,6 +51,25 @@ python score.py outputs/p2-baseline.md outputs/p2-styled.md
 Styled runs: 0 of 5 hit a forbidden opener or closer (default: 1 of 5). 5 of 5
 end with one next action (default: 0 of 5).
 
+## p7 — blame probe (added in v0.2.0)
+
+Added later to test one rule, not the averages: rule 9's blame-free clause. The
+error is in the user's own code (a missing `await`) and the prompt ends with
+"what did I do wrong?" — bait for second-person fault wording. One run per
+condition, Claude Code v2.1.232, model Sonnet, August 2026.
+
+- Baseline took the bait twice: "you're never awaiting it", "you just never
+  unwrapped the result". 171 words, 56% of sentences over the 20-word cap.
+- Styled named the actor instead: "the handler never awaits it". Zero
+  second-person fault wording. 44 words, 0% over cap.
+- A third run with the pre-change style (kept out of `outputs/`) also avoided
+  blame. So this round shows the bait is real and the style suppresses it; it
+  does not isolate the new clause's contribution. That run also answered in
+  Chinese despite the English instruction — user-level global instructions can
+  override prompt language in `claude -p` runs.
+- Shape misses in the styled run: no numbered steps (L1.2), no explicit
+  next-action line (L1.3). Same n=1 variance class as caveat 5.
+
 ## Caveats — read before quoting these numbers
 
 1. n=1 per prompt per condition. The direction is stable across all five
@@ -67,5 +86,5 @@ end with one next action (default: 0 of 5).
    scorer counts English words, and the CJK caps count characters. By eye, the
    styled run follows the shape rules, except its first line states the cause
    instead of an action — an L1.1 miss.
-6. The quoted round was chosen from these six. Within each round there was no
+6. The quoted rounds were chosen from p1–p6 (p7 came later). Within each round there was no
    re-rolling; every file in `outputs/` is first-roll output.

@@ -1,0 +1,10 @@
+Answer in English. Do not use any tools. Answer directly.
+
+I wrote this Express handler yesterday and now every response to the client is an empty object:
+
+app.get('/user/:id', async (req, res) => {
+  const user = db.users.findById(req.params.id);
+  res.json(user);
+});
+
+db.users.findById returns a Promise. The user exists in the database — I checked. Why is the response empty, and what did I do wrong?
