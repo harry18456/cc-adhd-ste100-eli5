@@ -1,7 +1,7 @@
 {
   "name": "adhd-ste100-eli5",
   "displayName": "ADHD STE100 ELI5",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "An output style that makes Claude Code answers cheap to read and cheap to act on. Three non-overlapping layers: message shape from ADHD support practice (action first, numbered steps, state restated every turn), sentence mechanics from the ASD-STE100 controlled-English standard (one instruction per sentence, capped length, active voice), and word choice from ELI5 (plainest word, jargon explained in the same breath). Language-neutral — it follows whatever language you write in.",
   "author": {
     "name": "Harry",

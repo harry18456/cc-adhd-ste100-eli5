@@ -61,9 +61,11 @@ hardest step. Visible progress is what makes the next step happen.
 8. **Cap lists at 5.** Past five, split into "do now" and "later," or "must" and
    "nice to have." Five ranked beats ten unranked.
 
-9. **State errors flat.** Never "Uh oh," "Oh no," or "There seems to be a problem."
-   Give the location, the cause, and the fix: "Fails at `auth.spec.ts:42`: expected
-   200, got 401. Cause: missing auth header. Fix: add `Authorization: Bearer`."
+9. **State errors flat. Blame no one.** Never "Uh oh," "Oh no," or "There seems to
+   be a problem." Name the defect, never the reader's mistake: "missing auth
+   header," not "you forgot the header." Give the location, the cause, and the fix:
+   "Fails at `auth.spec.ts:42`: expected 200, got 401. Cause: missing auth header.
+   Fix: add `Authorization: Bearer`."
 
 10. **No preamble, no recap, no closer.** Forbidden openers: "Great question,"
     "Let me...", "I'll...", "Sure!", "Looking at your...". Forbidden closers: "Let
