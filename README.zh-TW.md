@@ -134,19 +134,19 @@
 
 ## 啟用
 
-裝好 plugin **不等於**啟用這個 style，要自己選：
+裝好 plugin **不等於**啟用這個 style，要自己選（Claude Code v2.1.269 以上）：
 
 ```
-/config
+/output-style adhd-ste100-eli5:ADHD STE100 ELI5
 ```
 
-選 **Output style** → **ADHD STE100 ELI5**。
+名稱不分大小寫，但 `adhd-ste100-eli5:` 前綴一定要加。也可以執行 `/config`，選 **Output style** → **ADHD STE100 ELI5**。兩種做法都會把選擇存進 `.claude/settings.local.json`。
 
-然後執行 `/clear` 或開新的 session。output style 是 system prompt 的一部分，Claude Code 只在 session 開始時讀一次，所以中途切換不會生效。
+v2.1.251 起，中途切換會從下一則訊息開始生效：Claude Code 把 style 附在之後的訊息上。不過對話裡前面的回覆還是舊的語氣，模型容易跟著舊的走。切完執行 `/clear` 或開新的 session，style 才會完整生效。
 
-> `/output-style` 這個獨立指令在 Claude Code v2.1.73 標為棄用、v2.1.91 已移除。請用 `/config`。
+> `/output-style` 在 v2.1.73 標為棄用、v2.1.91 移除，v2.1.269 又加回來。中間那幾版請用 `/config`。
 
-不想用選單的話，直接寫進 `.claude/settings.local.json`：
+不想用指令或選單的話，直接寫進 `.claude/settings.local.json`：
 
 ```json
 {
@@ -154,7 +154,7 @@
 }
 ```
 
-`adhd-ste100-eli5:` 這個前綴是 plugin 命名空間，**必須加** —— 在 v2.1.229 實測過，style 來自 plugin 時裸名 `ADHD STE100 ELI5` 解析不到。裸名只在檔案直接放進 `.claude/output-styles/` 時有效。
+`adhd-ste100-eli5:` 這個前綴是 plugin 命名空間，設定和指令都**必須加** —— 在 v2.1.229 和 v2.1.291 都實測過，style 來自 plugin 時裸名 `ADHD STE100 ELI5` 解析不到。裸名只在檔案直接放進 `.claude/output-styles/` 時有效。
 
 ## 作用範圍
 

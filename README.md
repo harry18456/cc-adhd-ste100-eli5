@@ -177,22 +177,26 @@ Two rules adapt automatically:
 
 ## Activate
 
-Installing the plugin does **not** turn the style on. Pick it:
+Installing the plugin does **not** turn the style on. Pick it (Claude Code v2.1.269
+or later):
 
 ```
-/config
+/output-style adhd-ste100-eli5:ADHD STE100 ELI5
 ```
 
-Select **Output style** → **ADHD STE100 ELI5**.
+The name is case-insensitive, but the `adhd-ste100-eli5:` prefix is required. You can
+also run `/config` and select **Output style** → **ADHD STE100 ELI5**. Both save the
+choice to `.claude/settings.local.json`.
 
-Then run `/clear` or start a new session. An output style is part of the system
-prompt, which Claude Code reads once at session start, so it does not take effect
-mid-session.
+Since v2.1.251, a switch takes effect from your next message: Claude Code adds the
+style to the messages that follow. The replies already in the conversation keep the
+old voice, though, and the model tends to keep following them. Run `/clear` or start
+a new session to get the style in full.
 
-> The standalone `/output-style` command was deprecated in Claude Code v2.1.73 and
-> removed in v2.1.91. Use `/config`.
+> `/output-style` was deprecated in v2.1.73, removed in v2.1.91, and added back in
+> v2.1.269. On the versions in between, use `/config`.
 
-To set it without the menu, put this in `.claude/settings.local.json`:
+To set it without the command or the menu, put this in `.claude/settings.local.json`:
 
 ```json
 {
@@ -200,10 +204,10 @@ To set it without the menu, put this in `.claude/settings.local.json`:
 }
 ```
 
-The `adhd-ste100-eli5:` prefix is the plugin namespace, and it is required —
-tested on v2.1.229, the bare name `ADHD STE100 ELI5` does not resolve when the
-style comes from the plugin. The bare name works only for a copy placed directly
-in `.claude/output-styles/`.
+The `adhd-ste100-eli5:` prefix is the plugin namespace, and both the setting and the
+command need it — tested on v2.1.229 and again on v2.1.291, the bare name
+`ADHD STE100 ELI5` does not resolve when the style comes from the plugin. The bare
+name works only for a copy placed directly in `.claude/output-styles/`.
 
 ## Scope
 
