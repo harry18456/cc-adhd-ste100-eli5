@@ -1,2 +1,2 @@
 # Normalize line endings for text files by default.
-* text=auto
+* text=auto eol=lf
