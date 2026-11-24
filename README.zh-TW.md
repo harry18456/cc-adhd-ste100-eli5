@@ -10,7 +10,7 @@
 
 ## 差別長這樣
 
-下面兩段都是真實的 `claude -p` 輸出（Sonnet、Claude Code v2.1.229、2026 年 8 月），同一個中文 prompt：正式環境 API 在 `order.customer.id` 噴 `TypeError`，因為少數訂單沒有 `customer` 欄位。每個條件各跑一次，沒有重抽。Prompt、原始輸出、評分腳本都在 [`eval/`](eval/)。
+下面兩段都是真實的 `claude -p` 輸出（Sonnet、Claude Code v2.1.229、2026 年 8 月），同一個中文 prompt：正式環境 API 在 `order.customer.id` 噴 `TypeError`，因為少數訂單沒有 `customer` 欄位。每個條件各跑一次，沒有重抽。Prompt、原始輸出、評分腳本都在 [`eval/`](https://github.com/harry18456/cc-adhd-ste100-eli5/tree/eval-data/eval)。
 
 **改造前 —— 預設風格。** 修法埋在後半段。
 
@@ -21,7 +21,7 @@
 > 1. **Guest 訂單 / 未登入結帳**:少數訂單本來就沒有綁定 customer(訪客下單),`customer` 欄位設計上就允許空值。
 > 2. **Populate/Join 失敗**:如果 `customer` 是透過 reference 關聯查詢出來的(例如 Mongoose 的 `.populate('customer')`),當該顧客帳號被刪除或資料被清除時,populate 會回傳 `null` 而不是拋錯。
 >
-> *〔README 在此截斷 —— 後面還有兩個成因、排查步驟、三段修法。全文：[`eval/outputs/p6-zh-baseline.md`](eval/outputs/p6-zh-baseline.md)〕*
+> *〔README 在此截斷 —— 後面還有兩個成因、排查步驟、三段修法。全文：[`eval/outputs/p6-zh-baseline.md`](https://github.com/harry18456/cc-adhd-ste100-eli5/blob/eval-data/eval/outputs/p6-zh-baseline.md)〕*
 
 **改造後 —— 本 style。** 全文引用。
 
@@ -71,7 +71,7 @@
 | 禁用開場白 / 收尾 | 5 次中 1 次 | 5 次中 0 次 |
 | 結尾給一個 next action | 5 次中 0 次 | 5 次中 5 次 |
 
-上方引用的中文題未納入表格 —— 評分腳本以英文詞數為單位。兩個誠實的觀察：第 1 層第 5 條（時間估計）在 5 次中 0 次觸發；中文那次的第一行是原因不是動作，第 1 層第 1 條沒完全跟上。方法與注意事項見 [`eval/README.md`](eval/README.md)。
+上方引用的中文題未納入表格 —— 評分腳本以英文詞數為單位。兩個誠實的觀察：第 1 層第 5 條（時間估計）在 5 次中 0 次觸發；中文那次的第一行是原因不是動作，第 1 層第 1 條沒完全跟上。方法與注意事項見 [`eval/README.md`](https://github.com/harry18456/cc-adhd-ste100-eli5/blob/eval-data/eval/README.md)。
 
 ## 為什麼要三個成分
 

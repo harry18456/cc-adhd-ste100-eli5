@@ -16,7 +16,7 @@ Both blocks below are real `claude -p` output (Sonnet, Claude Code v2.1.229,
 August 2026) for the same prompt: a production API that crashes on
 `order.customer.id` because some orders have no `customer` field. One run per
 condition, no re-rolls. Prompts, raw outputs, and the scoring script live in
-[`eval/`](eval/).
+[`eval/`](https://github.com/harry18456/cc-adhd-ste100-eli5/tree/eval-data/eval).
 
 **Before — default style.** 316 words of prose. The fix arrives in the second half.
 
@@ -34,7 +34,7 @@ condition, no re-rolls. Prompts, raw outputs, and the scoring script live in
 >   reference wasn't populated.
 >
 > *[cut here for the README — two more causes, then four fix options with code.
-> Full text: [`eval/outputs/p2-baseline.md`](eval/outputs/p2-baseline.md)]*
+> Full text: [`eval/outputs/p2-baseline.md`](https://github.com/harry18456/cc-adhd-ste100-eli5/blob/eval-data/eval/outputs/p2-baseline.md)]*
 
 **After — this style.** 141 words, quoted in full.
 
@@ -79,7 +79,7 @@ decision, concept explanation, multi-step how-to:
 | Ends with one next action | 0 of 5 | 5 of 5 |
 
 One honest miss: rule 5 of Layer 1 (time estimates) fired in 0 of 5 styled runs.
-Method and caveats: [`eval/README.md`](eval/README.md).
+Method and caveats: [`eval/README.md`](https://github.com/harry18456/cc-adhd-ste100-eli5/blob/eval-data/eval/README.md).
 
 ## Why three ingredients
 
